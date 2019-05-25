@@ -45,19 +45,44 @@ public class NewUser extends AppCompatActivity {
 
         blogin.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v)
-            {
-                if(etpwd.getText().toString().equals(etretype.getText().toString())&& !etuid.getText().toString().equals(""))
+            public void onClick(View v) {
+               int find=0;
+                c.moveToFirst();
+                if (etuid.getText().toString().equals(c.getString(0)))
                 {
-                    db.execSQL("INSERT INTO logintable VALUES('"+etuid.getText().toString()+"','"+etpwd.getText().toString()+"');");
+                    find=1;
                 }
-                else{
-                    Toast.makeText(getBaseContext(), "Pasword Not Matching!", Toast.LENGTH_LONG).show();
+                else
+                {
+                    while(c.moveToNext())
+                    {
+                        if (etuid.getText().toString().equals(c.getString(0)))
+                        {
+                            find=1;
+                            break;
+                        }
+                    }
                 }
-                c=db.rawQuery("SELECT * FROM logintable", null);
-                db.close();
-                Intent i= new Intent(getBaseContext(),MainActivity.class);
-                startActivity(i);
+
+                if(find==0)
+                {
+                    if(etpwd.getText().toString().equals(etretype.getText().toString())&& !etuid.getText().toString().equals(""))
+                    {
+                        db.execSQL("INSERT INTO logintable VALUES('"+etuid.getText().toString()+"','"+etpwd.getText().toString()+"');");
+                    }
+                    else{
+                        Toast.makeText(getBaseContext(), "Pasword Not Matching!", Toast.LENGTH_LONG).show();
+                    }
+                    c=db.rawQuery("SELECT * FROM logintable", null);
+                    db.close();
+                    Intent i= new Intent(getBaseContext(),MainActivity.class);
+                    startActivity(i);
+                }
+                else
+                {
+                    Toast.makeText(getBaseContext(), "User Already Exist Already! Try Again!", Toast.LENGTH_LONG).show();
+
+                }
 
             }
         });
